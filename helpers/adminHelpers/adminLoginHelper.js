@@ -278,6 +278,133 @@ module.exports = {
 
 
 
+    getAllProducts: () => {
+        return new Promise(async (resolve, reject) => {
+          await db.Product.find().then((response) => {
+            resolve(response);
+          });
+        });
+      },
+
+
+
+
+      getCodCount: () => {
+        return new Promise(async (resolve, reject) => {
+          let response = await db.Order.aggregate([
+            {
+              $unwind: "$orders",
+            },
+            {
+              $match: {
+                "orders.paymentMethod": "COD",
+              },
+            },
+          ]);
+          resolve(response);
+        });
+      },
+
+
+
+
+
+
+
+      getOnlineCount: () => {
+        return new Promise(async (resolve, reject) => {
+          let response = await db.Order.aggregate([
+            {
+              $unwind: "$orders",
+            },
+            {
+              $match: {
+                "orders.paymentMethod": "razorpay",
+              },
+            },
+          ]);
+          resolve(response);
+        });
+      },
+
+
+
+
+
+    getWalletCount:()=>{
+
+    return new Promise(async (resolve, reject) => {
+      let response = await db.Order.aggregate([
+        {
+          $unwind: "$orders",
+        },
+        {
+          $match: {
+            "orders.paymentMethod": "wallet",
+          },
+        },
+      ]);
+      resolve(response);
+    });
+
+  },
+
+
+
+
+
+  getSalesReport: () => {
+    try {
+        return new Promise((resolve, reject) => {
+            db.Order.aggregate([
+                {
+                    $unwind: '$orders'
+                },
+                {
+                    $match: {
+                        "orders.orderConfirm": "delivered"
+                    }
+                }
+            ]).then((response) => {
+                resolve(response)
+            })
+        })
+    } catch (error) {
+        console.log(error.message);
+    }
+},
+
+
+postReport: (date) => {
+  
+    try {
+        let start = new Date(date.startdate);
+        let end = new Date(date.enddate);
+        return new Promise((resolve, reject) => {
+            db.Order.aggregate([
+                {
+                    $unwind: '$orders'
+                },
+                {
+                    $match: {
+                        $and: [
+                            { "orders.orderConfirm": "delivered" },
+                            { "orders.createdAt": { $gte: start, $lte: new Date(end.getTime() + 86400000) } }
+                        ]
+                    }
+                }
+            ]).exec()
+                .then((response) => {
+                    console.log(response,'res');
+                    resolve(response)
+                })
+        })
+    } catch (error) {
+        console.log(error.message);
+    }
+},
+
+
 
 
 

@@ -3,6 +3,7 @@ const user = require('../../models/connection')
 const adminHelper = require('../../helpers/adminHelpers/adminLoginHelper')
 const auth = require('../../middlewares/middleware')
 const session = require('express-session')
+const orderHelper = require('../../helpers/adminHelpers/adminOrderHelper')
 
 
 
@@ -79,6 +80,10 @@ const adminLogin = {
 
   // },
 
+
+
+
+  // GET LOGIN
   getLogin: (req, res) => {
     if (req.session.admin) {
 
@@ -90,7 +95,7 @@ const adminLogin = {
 
   },
 
-
+// POST LOGIN
   postLogin: (req, res) => {
     let data = req.body
     adminHelper.doAdminLogin(data).then((loginAction) => {
@@ -99,18 +104,89 @@ const adminLogin = {
     })
   },
 
-  getDashboard: (req, res) => {
+
+
+
+ // GET DASHBOARD 
+  getDashboard:async (req, res) => {
     if (req.session.admin) {
 
       let admin = req.session.admin
-      res.render('admin/admin-dashboard', { layout: 'admin-layout', admin, dashboard: true })
+      let totalProducts,
+            days = [];
+        let ordersPerDay = {};
+        let paymentCount = [];
+
+        let Products = await adminHelper.getAllProducts();
+        totalProducts = Products.length;
+
+        await orderHelper.getOrderByDate().then((response) => {
+
+            let result = response;
+            for (let i = 0; i < result.length; i++) {
+                for (let j = 0; j < result[i].orders.length; j++) {
+                    let ans = {};
+                    ans["createdAt"] = result[i].orders[j].createdAt;
+                    days.push(ans);
+                }
+            }
+
+            days.forEach((order) => {
+                let day = order.createdAt.toLocaleDateString("en-US", {
+                    weekday: "long",
+                });
+                ordersPerDay[day] = (ordersPerDay[day] || 0) + 1;
+
+            });
+        });
+
+        let getCodCount = await adminHelper.getCodCount();
+        let codCount = getCodCount.length;
+
+        let getOnlineCount = await adminHelper.getOnlineCount();
+        let onlineCount = getOnlineCount.length;
+
+        let getWalletCount = await adminHelper.getWalletCount();
+        let WalletCount = getWalletCount.length;
+
+        paymentCount.push(onlineCount);
+        paymentCount.push(codCount);
+        paymentCount.push(WalletCount);
+
+        let orderByCategory = await orderHelper.getOrderByCategory()
+
+
+        let Men = 0, Women = 0, Kids = 0;
+
+        orderByCategory.forEach((order) => {
+            order.forEach((product) => {
+                if (product.category === 'Men') Men += product.quantity;
+                else if (product.category === 'Women') Women += product.quantity;
+                else if (product.category === 'Kids') Kids += product.quantity;
+            });
+        });
+
+        let category = [Men, Women, Kids];
+
+        orderHelper.getAllOrders().then((response) => {
+
+            let length = response;
+
+            orderHelper.getAllOrdersSum().then((response) => {
+                let total = response
+
+      res.render('admin/admin-dashboard', {layout: "admin-layout",admin,length,total,totalProducts,ordersPerDay,  paymentCount,category, dashboard: true
+                })
+            });
+        });
+      // res.render('admin/admin-dashboard', { layout: 'admin-layout', admin, dashboard: true })
     } else {
       res.redirect('/admin/admin-login')
     }
 
   },
 
-
+// DO LOGOUT
   doLogout: (req, res) => {
     req.session.admin = null
     res.redirect = ('/admin/login')
@@ -196,7 +272,7 @@ const adminLogin = {
     let proId = req.params.id;
     adminHelper.getEditProduct(proId).then(async (product) => {
       let category = await user.Category.find()
-      res.render('admin/editProduct', { layout: 'admin-layout', product, category, admin })
+      res.render('admin/editProduct', { layout: 'admin-layout', product, category, admin, productPage: true })
     })
 
   },
@@ -435,6 +511,57 @@ const adminLogin = {
       res.json(true);
     });
   },
+
+
+
+
+
+  // SALES REPORT
+  getSalesReport: async (req, res) => {
+    let admin = req.session.admin
+    let report = await adminHelper.getSalesReport()
+    let details = []
+    const getDate = (date) => {
+        let orderDate = new Date(date)
+        let day = orderDate.getDate()
+        let month = orderDate.getMonth() + 1
+        let year = orderDate.getFullYear()
+        return `${isNaN(day) ? "00" : day} - ${isNaN(month) ? "00" : month} - ${isNaN(year) ? "0000" : year}`
+    }
+
+    report.forEach((orders) => {
+        details.push(orders.orders)
+    })
+
+    res.render("admin/salesReport", { layout: 'admin-layout', admin, details, getDate, salles: true })
+},
+
+
+// POST SALES REPORT
+postSalesReport: (req, res) => {
+
+  let admin = req.session.admin
+  let details = []
+  const getDate = (date) => {
+      let orderDate = new Date(date)
+      let day = orderDate.getDate()
+      let month = orderDate.getMonth() + 1
+      let year = orderDate.getFullYear()
+      return `${isNaN(day) ? "00" : day} - ${isNaN(month) ? "00" : month} - ${isNaN(year) ? "0000" : year}`
+  }
+
+  adminHelper.postReport(req.body).then((orderData) => {
+      orderData.forEach((orders) => {
+          details.push(orders.orders)
+      })
+
+      res.render("admin/salesReport", { layout: 'admin-layout', admin, details, getDate })
+  })
+
+},
+
+
+
 
 
 

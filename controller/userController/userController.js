@@ -4,6 +4,7 @@ const db = require("../../models/connection")
 const { sendOtpApi, otpVerify } = require('../../api/twilio')
 const session = require('express-session')
 const cartHelper = require('../../helpers/userHelpers/cartHelper')
+const userHelpers = require('../../helpers/userHelpers/userHelpers')
 
 
 
@@ -116,7 +117,7 @@ module.exports = {
     let data = req.body
     userhelpers.doSignUp(data).then((response) => {
       req.session.user = response.data
-      console.log(response.data, ';;');
+     
       req.session.loggedIn = true
       res.send(response)
     })
@@ -144,16 +145,19 @@ module.exports = {
     const mobileNumber  = req.body.mobileNumber;
     req.session.number = mobileNumber;
     try {
-      const user = await userhelpers.getUserNumber(mobileNumber);
+      userhelpers.getUserNumber(mobileNumber).then((user) => {
 
       if (user.status !== true) {
         return res.status(200).json({ error: true, message: 'Wrong Mobile Number' });
       }
-      const status = await sendOtpApi(mobileNumber);
-      if (!status) {
-        return res.status(200).json({ error: true, message: 'Something went wrong' });
-      }
-      res.status(200).json({ error: false, message: 'Otp has been send successfully' });
+      sendOtpApi(mobileNumber).then((result)=> {
+
+        if (!result) {
+          return res.status(200).json({ error: true, message: 'Something went wrong' });
+        }
+        res.status(200).json({ error: false, message: 'Otp has been send successfully' });
+      })
+    })
     } catch (error) {
       res.status(500).json({ message: 'Internal server error occured' });
     }
@@ -167,10 +171,9 @@ module.exports = {
 
 
     let number = req.session.number
-    console.log(otp, req.body, number, '--');
+  
     const user = await db.user.findOne({ phonenumber: number }).lean().exec()
     req.session.user = user;
-    console.log(user);
     try {
       const status = await otpVerify(otp, number)
 
@@ -201,26 +204,80 @@ module.exports = {
   },
 
 
+  // getShop: (req, res) => {
 
-  
+  //   userSession = req.session.user
+
+  //   userhelpers.getShopProducts(req.body).then((product) => {
+
+    
+  //       res.render('user/shop', { layout: "layout", userSession, product })
+      
+
+
+  //   })
+
+  // },
+
   //SHOP
-  getShop: (req, res) => {
+  // getShop: (req, res) => {
 
-    userSession = req.session.user
+  //   userSession = req.session.user
 
-    userhelpers.getShopProducts(req.body).then((product) => {
+  //   userhelpers.getShopProducts(req.body).then((product) => {
 
-      if (req.session.user) {
+  //     if (req.session.user) {
 
-        res.render('user/shop', { layout: "layout", userSession, product })
-      } else {
-        res.render('user/shop', { product })
-      }
+  //       res.render('user/shop', { layout: "layout", userSession, product })
+  //     } else {
+  //       res.render('user/shop', { product })
+  //     }
 
 
-    })
+  //   })
 
-  },
+  // },
+
+  getShopPage: async (req, res) => {
+    try {
+        let userSession = req.session.user   
+    console.log('1');
+     
+    
+       
+
+        console.log('2',); 
+        const page = parseInt(req.query?.page) || 1
+        console.log('3');
+        const perPage = 6
+        if (req.query?.search || req.query?.sort || req.query?.filter) {
+            console.log('4');
+            const { product, currentPage, totalPages, noProductFound } = await userhelpers.getQueriesOnShop(req.query)
+            console.log('5');
+            noProductFound ?
+          
+                req.session.noProductFound = noProductFound
+             
+                : req.session.selectedProducts = product
+            res.render('user/shop', { layout: 'Layout', product, userSession, totalPages, currentPage, productResult: req.session.noProductFound })
+        } else {
+            let currentPage = 1
+            const { product, totalPages } = await userHelpers.getAllProducts(page, perPage);
+            if (product?.length != 0)
+                req.session.noProductFound = false
+            res.render('user/shop', { layout: 'Layout', product, userSession, currentPage,totalPages, productResult: req.session.noProduct })
+            req.session.noProductFound = false
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+},
+
+
+
+
+
 
   // getShop: (req, res) => {
   //   let userSession = req.session.user;
@@ -274,13 +331,14 @@ module.exports = {
       
       const userSession = req.session.user;
      
+      const addPro = await userhelpers.addProduct(proId,userSession._id)
       // const count = await cartHelper.getCartCount(userSession._id);
-    
+      
       const product = await userhelpers.getProductDetail(proId);
-  
-      res.render('user/productDetails', { product, userSession });
+      let response
+      res.render('user/productDetails', { product, userSession, addPro });
     } catch (error) {
-      // Handle and log any errors
+    
       console.error('Error in getProductDetail:', error);
       res.status(500).send('Internal Server Error');
     }

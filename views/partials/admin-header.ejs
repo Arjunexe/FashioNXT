@@ -61,16 +61,46 @@
           <span class="text">Users</span>
         </a>
       </li>
-      <li class="menu-item">
-        <a class="menu-link" href="/admin/coupon-list"> <i class="icon material-icons md-person"></i>
-          <span class="text">Coupons</span>
+
+
+
+
+      <% if(typeof coupon !== 'undefined' && coupon){ %>
+        <li class="menu-item active">
+    <% }else{ %>
+        <li class="menu-item">
+      <% } %>
+        <a class="menu-link" href="/admin/couponList"> <i class="icon material-icons md-person"></i>
+          <span class="text">Coupon</span>
         </a>
       </li>
-      <li class="menu-item">
+
+
+
+
+
+      <% if(typeof salles !== 'undefined' && salles){ %>
+        <li class="menu-item active">
+    <% }else{ %>
+        <li class="menu-item">
+      <% } %>
         <a class="menu-link" href="/admin/sales-report"> <i class="icon material-icons md-person"></i>
           <span class="text">Sales Report</span>
         </a>
       </li>
+
+
+      
+
+      
+      <!-- <li class="menu-item">
+        <a class="menu-link" href="/admin/sales-report"> <i class="icon material-icons md-person"></i>
+          <span class="text">Sales Report</span>
+        </a>
+      </li> -->
+
+
+
       <li class="menu-item">
         <a class="menu-link" href="/admin/banner-list"> <i class="icon material-icons md-person"></i>
           <span class="text">Banner</span>

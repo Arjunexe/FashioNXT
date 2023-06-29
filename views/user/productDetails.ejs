@@ -129,8 +129,22 @@
                                         <!-- ADD TO CART -->
 
                                         <div class="product-extra-link2">
+                                           
+                                            <% if(addPro.status === true){ %>
                                             <button type="button" class="button button-add-to-cart"
+                                            onclick="addToCart('<%=product._id%>')">Added to cart</button>
+
+
+                                   <% }else{ %>
+
+                                            <button type="button" id="addc" class="button button-add-to-cart" 
                                                 onclick="addToCart('<%=product._id%>')">Add to cart</button>
+
+                                            <%  }%>
+
+                                            <button type="button" class="button button-add-to-cart " style="display:none"
+                                            id="addv"
+                                            onclick="addToCart('<%=product._id%>')">Added to cart</button>
 
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
@@ -802,6 +816,8 @@
             method: 'POST',
 
             success: (response) => {
+                document.getElementById("addc").style.display="none"
+                document.getElementById("addv").style.display=""
                 if (response.status) {
                     location.reload
                 }

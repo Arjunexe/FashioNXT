@@ -188,18 +188,23 @@
                   <div class="form-group collapse in" id="checkPayment">
                   </div>
                 </div>
-                <!-- <div class="custome-radio">
+                
+                <div class="custome-radio">
                   <input class="form-check-input" required="" type="radio" name="payment_option" value="wallet" id="exampleRadios2" checked="">
                   <label class="form-check-label" for="exampleRadios2" data-bs-toggle="collapse" data-target="#wallet" aria-controls="wallet">Wallet</label>
                   <div class="form-group collapse in" id="wallet">
                   </div>
-                </div> -->
-                <!-- <div class="custome-radio">
+                </div>
+
+                <div class="custome-radio">
                   <input class="form-check-input" required="" type="radio" value="razorpay" name="payment_option" id="exampleRadios3" checked="">
-                  <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Razorpay</label>
+                  <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#" aria-controls="paypal">Razorpay</label>
                   <div class="form-group collapse in" id="paypal">
                   </div>
-                </div> -->
+                </div>
+
+
+
                 <div class="form-group">
 
                   <input name="discountedAmount" id="total1" value="<%=total%>" type="hidden">
@@ -630,17 +635,16 @@
       success: (response) => {
        
         if (response.error) {
-        
-
-         
+          
+                       
           Swal.fire({
             title: 'Error!',
             text: response.error,
             icon: 'error',
             timer: 5000
           })
-        } else if (response.codStatus == true) {
-          console.log(response, 'status');
+        } else if (response.codStatus) {
+         
           Swal.fire({
             title: 'Order Placed!',
             text: 'Your order has been placed successfully.',
@@ -649,23 +653,69 @@
           }).then(() => {
             location.href = '/'
           })
-        } 
-      }
-    })
-  }
+        }else{
+          try{
+            razorpay(response)
+            
 
+            }catch(error){
+                Swal.fire({
+                  title: 'Error!',
+                  text: error.message,
+                  icon: 'error',
+                  timer: 500
+                })
+            }
+          }
+        } 
+      })
+    }
+
+
+
+
+    function razorpay(order) {
+    
+      
+      var options = {
+        "key": "rzp_test_2iHDAx3U2Gm7Yb", // Enter the Key ID generated from the Dashboard
+        "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "INR",
+        "name": "FashioNXT",
+        "description": "Test Transaction",
+        "image": "https://example.com/your_logo",
+        "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        "handler": function(response) {
+          verifypayment(response, order)
+        },
+  
+        "prefill": {
+          "name": "Gaurav Kumar",
+          "email": "gaurav.kumar@example.com",
+          "contact": "9000090000"
+        },
+        "notes": {
+          "address": "Razorpay Corporate Office"
+        },
+        "theme": {
+          "color": "#3399cc"
+        }
+      }
+      var rzp1 = new Razorpay(options)
+      rzp1.open();
+    }
+  
 
 
  
 
-  function verifypayment(payment, order, paymentId) {
+  function verifypayment(payment, order) {
 
     $.ajax({
-      url: 'verify_payment',
+      url: '/verify-payment',
       data: {
         payment,
-        order,
-        paymentId
+        order
       },
       method: 'post',
       success: (response) => {
@@ -676,7 +726,7 @@
             icon: 'success',
             timer: 5000
           }).then(() => {
-            location.href = '/'
+            window.location.href = '/'
           })
         } else {
 

@@ -1,25 +1,65 @@
 
 PENDING
 
-
-Common footer and header for every pages - user
-Current page indicator
-sort filter pagination search for every list 
-add proper comments for the functions
-OTP COUNTOWN
-ORDER CANCEL OR RETURNS [REASON]
+RETURNS [REASON]
 SIGNUP FORM NUMBER AUTHENTICATION
+
 
 
 TASK
 
+RETURN EXPIRY
+ORDER DETAILS (SORT)
+INVOICE DOWNLOAD
+       
 
 
-order history and status in user side . Mobile
-PAYMENT METHOD RAZOR PAY , PAYPAL
-IMAGE ZOOM , IMAGE CROPPING
-ADMIN DASHBOARD
+
+
+
+
+
+sort filter pagination search for every list 
+
+
+
 CHART & GRAPH REPORTS IN ADMIN SIDE 
-USER PROFILE
+REFUND TO WALLET
+ADMIN DASHBOARD
+SALES REPORT PDF AND EXCEL DOWNLOAD (WITH ORDER SUMMARY)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    

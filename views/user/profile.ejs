@@ -161,29 +161,29 @@
                 <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
                   <div class="row">
                   
-
+                    <% address?.Address.forEach(function(item) { %>
                     <div class="col-lg-6">
                       <div class="card mb-3 mb-lg-0">
                         <div class="card-header">
                           <h5 class="mb-0">Billing Address</h5>
                         </div>
                         <div class="card-body">
-                          <strong>sdgadgagasg</strong>
+                          <strong><%=item.fname%> <%=item.lname%></strong>
                           <address>
-                        asdgasgs ,
-                            gasdgdg <br>
-                           asgadgag,
-                           adgasg ,
-                           gasdgadsg<br>
-                           agadsgd ,
-                           agdgag
+                            <%=item.street%> ,
+                            <%=item.appartment%> <br>
+                            <%=item.city%> ,
+                            <%=item.zipcode%> ,
+                            <%=item.state%> <br>
+                            <%=item.phone%> ,
+                            <%=item.email%>
 
                           </address>
                           <a href="#" class="btn-small">Edit</a>
                         </div>
                       </div>
                     </div>
-                
+                    <% }); %>
 
                     <!-- <div class="col-lg-6">
                       <div class="card">

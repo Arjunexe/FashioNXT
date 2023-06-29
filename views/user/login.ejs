@@ -53,7 +53,7 @@
     $.ajax({
       url: '/login',
       method: 'post',
-      data: {
+      data:
         email: emailValue,
         password: passwordValue,
       },
@@ -137,10 +137,11 @@
           data: {
             mobileNumber: mobileNumber
           },
-          success(response) {
+          success: function(response) {
             console.log(response, '-----');
             if (!response.error) {
-              setTimeout(appendVerifyForm(), 5000);
+              appendVerifyForm()
+              //setTimeout(appendVerifyForm(), 5000);
             } else {
               Swal.fire({
                 title: response.message,

@@ -126,7 +126,27 @@ router.post('/change-order-status',orderController.changeOrderStatus)
 
 
 
+                                //-------COUPON---------//
 
+// GET COUPON LIST
+router.get('/couponList',adminOrderController.getCoupon)
+
+
+// ADD COUPON
+router.route('/add-coupon').get(auth.adminauth,adminOrderController.getAddCoupon).post(adminOrderController.postaddCoupon)
+
+
+// GENERATE COUPON 
+router.route('/generate-coupon-code').get(auth.adminauth,adminOrderController.generatorCouponCode)
+
+// REMOVE COUPON
+router.route('/remove-coupon').delete(adminOrderController.removeCoupon)
+
+
+
+
+// SALES REPORT
+router.route('/sales-report').get( auth.adminauth,adminController.getSalesReport).post(adminController.postSalesReport)
 
 
 

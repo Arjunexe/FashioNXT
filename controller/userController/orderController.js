@@ -26,28 +26,61 @@ module.exports = {
 
 },
 
+// getProfile: (req, res) => {
+//   var count = null;
+
+//   let userSession = req.session.user;
+//   if (userSession) {
+//     cartHelper
+//       .getCartCount(userSession._id)
+//       .then((cartCount) => {
+//         count = cartCount;
+//         return userHelper.getUser(userSession._id);
+//       })
+//       .then((userData) => {
+//         return orderHelper.getAddress(userSession._id).then((address) => {
+//           return [userData, address];
+//         });
+//       })
+//       .then(([userData, address]) => {
+//         return orderHelper.getOrders(userSession._id).then((orders) => {
+//           res.render('user/profile', {
+//             layout: 'Layout',
+//             userSession,
+//             userData,
+//             count,
+//             address,
+//             orders,
+//           });
+//         });
+//       })
+//       .catch((error) => {
+//         console.log(error.message);
+//         // Handle the error and send an appropriate response
+//         res.status(500).send('An error occurred');
+//       });
+//   }
+// },
+
+
+
+
+
 
 
   
 
   // POST ADDRESS
   postAddress: (req, res) => {
-    console.log('1111111111111');
+    
     let data = req.body
     let userId = req.session.user._id
-    console.log(userId,'222222222222222');
+  
     orderHelper.postAddress(data, userId).then((response) => {
-      console.log(response,'reea');
+      
         res.send(response)
     })
 },
-
-
-
-
-
-
-
 
 
 
@@ -104,22 +137,32 @@ getCheckout: async (req, res) => {
 
 postCheckOut: async (req, res) => {
   let userId = req.session.user._id
+  
+  
   try {
     const data = req.body;
-      console.log(req.body,'bodyyyyyyyy');
+      
     try {
       const response = await orderHelper.placeOrder(data,userId);
+      const total = data.total
+      
+
+     
 
       if (data.payment_option === "COD") {
         res.json({ codStatus: true })
 
       }else if(data.payment_option === "razorpay"){
 
-        
+        orderHelper.generateRazorpay('hi',response.total).then((result)=>{
+          result.codeStatus = false;
+          res.json(result)
+        })
+       } else if (data.payment_option === 'wallet') {
+        res.json({ orderStatus: true, message: 'order placed successfully' })
+    }
 
-       } else {
-        res.json({ codStatus: false });
-      }
+
     } catch (error) {
       console.error({ error: error.message });
       res.status(500).json({ error: error.message });
@@ -164,11 +207,26 @@ cancelOrder: (req, res) => {
   let orderId = req.query.id;
   let total = req.query.total;
   let userId = req.session.user._id
-  console.log(orderId, req.query.total, req.session.user._id);
+ 
   orderHelper.cancelOrder(orderId).then((canceled) => {
-  
+     orderHelper.addWallet(userId, total).then((walletStatus) => {
       res.send(canceled)
-      // })
+      })
+  })
+},
+
+
+// RETURN ORDER
+returnOrder: (req, res) => {
+  let orderId = req.query.id
+  let total = req.query.total
+  let userId = req.session.user._id
+  orderHelper.returnOrder(orderId, userId).then((returnOrderStatus) => {
+      orderHelper.addWallet(userId, total).then((walletStatus) => {
+          orderHelper.updatePaymentStatus(orderId, userId).then((paymentStatus) => {
+          res.send(returnOrderStatus)
+          })
+      })
   })
 },
 
@@ -180,29 +238,78 @@ cancelOrder: (req, res) => {
 // ORDER DETAILS
 orderDetails: async (req, res) => {
   let user = req.session.user;
+  
   let count = await cartHelper.getCartCount(user._id)
   let userId = req.session.user._id;
   let orderId = req.params.id;
   orderHelper.findOrder(orderId, userId).then((orders) => {
       orderHelper.findAddress(orderId, userId).then((address) => {
           orderHelper.findProduct(orderId, userId).then((product) => {
-              console.log(orders[0].orderConfirm, '====');
-              res.render('user/order-details', { layout: 'layout' , user, count, product, address, orders, orderId })
+
+            let data = orderHelper.createData(orders, product, address)
+             
+              res.render('user/order-details', { layout: 'layout' , data, user, count, product, address, orders, orderId })
           })
       })
   })
 },
 
 
-
+// CANCEL ORDER STATUS
 changeOrderStatus: (req, res) => {
   let orderId = req.body.orderId
   let status = req.body.status
   orderHelper.changeOrderStatus(orderId, status).then((response) => {
-      console.log(response);
+    
       res.send(response)
   })
-}
+},
+
+
+
+verifyPayment: (req, res) => {
+  // orderHelper.verifyPayment(req.body).then(() => {
+  //     orderHelper.changePaymentStatus(req.session.user._id, req.body["order[receipt]"], req.body["payment[razorpay_payment_id]"])
+  //         .then(() => {
+  //             res.json({ status: true })
+  //         })
+  //         .catch((err) => {
+  //             res.json({ status: false })
+  //         })
+  // })
+
+  res.status(200).json({status: true});
+
+},
+
+
+
+
+
+// RETURN ORDER POST
+returnOrder: (req, res) => {
+  let orderId = req.query.id
+  let total = req.query.total
+  let userId = req.session.user._id
+  orderHelper.returnOrder(orderId, userId).then((returnOrderStatus) => {
+      // orderHelpers.addWallet(userId, total).then((walletStatus) => {
+          // orderHelpers.updatePaymentStatus(orderId, userId).then((paymentStatus) => {
+          res.send(returnOrderStatus)
+          // })
+      // })
+  })
+},
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -10,11 +10,15 @@ const sendOtpApi = (number) =>{
     
     return new Promise ((resolve, reject) =>{
         
-           
         client.verify.v2.services(servicesSid)
                         .verifications
                         .create({to: `+91${number}`, channel: 'sms'})
-                        .then(verification => {resolve(verification.sid)});
+                        .then((verification) => {
+                            console.log('this is otp-veri',verification);
+                            resolve(verification.sid)
+                        }).catch((err)=> {
+                            console.log('error in sending otp', err);
+                        })
     })
 }
 

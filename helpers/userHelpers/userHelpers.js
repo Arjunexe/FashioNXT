@@ -1,6 +1,8 @@
 const { model } = require("mongoose")
 const db = require("../../models/connection")
 const bcrypt = require("bcrypt")
+const { log } = require("console")
+const { ObjectId } = require('mongodb')
 
 
 module.exports={
@@ -173,13 +175,19 @@ module.exports={
   // }
 
   doLogin: (data) => {
+    
     return new Promise(async (resolve, reject) => {
         try {
+          
             await db.user.findOne({ email: data.email }).then((user) => {
+             
                 let response = {}
                 if (user) {
+              
                     if (user.status == true) {
+                     
                         bcrypt.compare(data.password, user.password).then((loginTrue) => {
+                         
                             if (loginTrue) {
                                 response.user = user
                                 response.status = true
@@ -286,19 +294,22 @@ module.exports={
   // },
 
 
-  getShopProducts: (req) => {
-    return new Promise((resolve, reject) => {
-      db.Product.find().then((product) => {
-        if (product) {
-          resolve(product);
-        } else {
-          reject(new Error("No products found"));
-        }
-      }).catch((error) => {
-        reject(error); // Propagate any error occurred during the find() operation
-      });
-    });
-  },
+  
+// GET SHOP PRODUCTS FIRST
+
+  // getShopProducts: (req) => {
+  //   return new Promise((resolve, reject) => {
+  //     db.Product.find().then((product) => {
+  //       if (product) {
+  //         resolve(product);
+  //       } else {
+  //         reject(new Error("No products found"));
+  //       }
+  //     }).catch((error) => {
+  //       reject(error); // Propagate any error occurred during the find() operation
+  //     });
+  //   });
+  // },
 
 
 
@@ -343,6 +354,140 @@ documentCount: () => {
     })
   })
 },
+
+
+
+addProduct: (proId,userId )=> {
+  return new Promise((resolve, reject) => {
+    db.Cart.aggregate([
+      {$match:{user:new ObjectId(userId)}},
+      {$unwind:'$cartItems'},
+      {$match:{'cartItems.productId':new ObjectId(proId)}}
+    ])
+      .then((foundCart) => {
+        console.log(foundCart,"ooooooooopppppppppppp999999999999");
+       if (foundCart && Array.isArray(foundCart) && foundCart.length !== 0 ){
+          resolve({status:true});
+          
+        } else {
+        resolve({status:false}); 
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+},
+
+
+
+
+
+getQueriesOnShop: (query) => {
+  const search = query?.search
+  const sort = query?.sort
+  const filter = query?.filter
+  const page = parseInt(query?.page) || 1
+  const perPage = 6
+
+
+  return new Promise(async (resolve, reject) => {
+
+      let filterObj = {}
+
+      if (filter === 'category=Men') {
+          filterObj = { category: 'Men' }
+      } else if (filter === 'category=Women') {
+          filterObj = { category: 'Women' }
+      } else if (filter === 'category=Kid') {
+          filterObj = { category: 'Kid' }
+      }
+      console.log(filterObj, 'filterObj');
+
+      //Building search query
+
+      let searchQuery = {}
+
+      if (search) {
+          searchQuery = {
+              $or: [
+                  { name: { $regex: search, $options: 'i' } },
+                  { description: { $regex: search, $options: 'i' } }
+              ]
+          }
+      }
+
+      //Building object based on query parameter
+
+      let sortObj = {}
+
+      if (sort === '-createdAt') {
+          sortObj = { createdAt: -1 };
+      } else if (sort === 'createdAt') {
+          sortObj = { createdAt: 1 };
+      } else if (sort === '-price') {
+          sortObj = { price: -1 };
+      } else if (sort === 'price') {
+          sortObj = { price: 1 };
+      }
+
+      const skip = (page - 1) * perPage;
+      const product = await db.Product.find({
+          ...searchQuery,
+          ...filterObj,
+      })
+          .sort(sortObj)
+          .skip(skip)
+          .limit(perPage);
+
+
+      const totalProducts = await db.Product.countDocuments({
+          ...searchQuery,
+          ...filterObj,
+      });
+
+         console.log(searchQuery,'searchQuery');
+         console.log(sortObj,'sortObj');
+         console.log(skip,'skip');
+         console.log(product,'product');
+      console.log(totalProducts, 'totalProducts');
+
+      const totalPages = Math.ceil(totalProducts / perPage);
+      if (product.length == 0) {
+          resolve({
+              noProductFound: true,
+              Message: "No results found.."
+          })
+      }
+      resolve({
+          product,
+          noProductFound: false,
+          currentPage: page,
+          totalPages,
+      });
+
+  })
+
+},
+
+
+
+
+getAllProducts: async (page, perPage) => {
+  const skip = (page - 1) * perPage;
+  const product = await db.Product.find()
+      .skip(skip)
+      .limit(perPage);
+
+  const totalProducts = await db.Product.countDocuments();
+  const totalPages = Math.ceil(totalProducts / perPage);
+
+  return {
+      product,
+      totalPages,
+  };
+},
+
 
 
 
