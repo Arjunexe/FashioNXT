@@ -141,67 +141,67 @@ module.exports = {
   },
 
 //  OTP LOGIN
-  otpLogin: async (req, res) => {
-    const mobileNumber  = req.body.mobileNumber;
-    req.session.number = mobileNumber;
-    try {
-      userhelpers.getUserNumber(mobileNumber).then((user) => {
+  // otpLogin: async (req, res) => {
+  //   const mobileNumber  = req.body.mobileNumber;
+  //   req.session.number = mobileNumber;
+  //   try {
+  //     userhelpers.getUserNumber(mobileNumber).then((user) => {
 
-      if (user.status !== true) {
-        return res.status(200).json({ error: true, message: 'Wrong Mobile Number' });
-      }
-      sendOtpApi(mobileNumber).then((result)=> {
+  //     if (user.status !== true) {
+  //       return res.status(200).json({ error: true, message: 'Wrong Mobile Number' });
+  //     }
+  //     sendOtpApi(mobileNumber).then((result)=> {
 
-        if (!result) {
-          return res.status(200).json({ error: true, message: 'Something went wrong' });
-        }
-        res.status(200).json({ error: false, message: 'Otp has been send successfully' });
-      })
-    })
-    } catch (error) {
-      res.status(500).json({ message: 'Internal server error occured' });
-    }
-  },
+  //       if (!result) {
+  //         return res.status(200).json({ error: true, message: 'Something went wrong' });
+  //       }
+  //       res.status(200).json({ error: false, message: 'Otp has been send successfully' });
+  //     })
+  //   })
+  //   } catch (error) {
+  //     res.status(500).json({ message: 'Internal server error occured' });
+  //   }
+  // },
 
 
 //   OTP VERIFY  
-  otpVerify: async (req, res) => {
+  // otpVerify: async (req, res) => {
 
-    const { otp } = req.body;
+  //   const { otp } = req.body;
 
 
-    let number = req.session.number
+  //   let number = req.session.number
   
-    const user = await db.user.findOne({ phonenumber: number }).lean().exec()
-    req.session.user = user;
-    try {
-      const status = await otpVerify(otp, number)
+  //   const user = await db.user.findOne({ phonenumber: number }).lean().exec()
+  //   req.session.user = user;
+  //   try {
+  //     const status = await otpVerify(otp, number)
 
-      if (!status) {
-        res.status(200).json({ error: false, message: 'Something went wrong' })
-      }
-      res.status(200).json({ error: false, message: 'Otp has been verified' })
+  //     if (!status) {
+  //       res.status(200).json({ error: false, message: 'Something went wrong' })
+  //     }
+  //     res.status(200).json({ error: false, message: 'Otp has been verified' })
 
-    } catch (error) {
-      res.status(500).json({ message: 'Internal server error occured' })
-    }
-  },
+  //   } catch (error) {
+  //     res.status(500).json({ message: 'Internal server error occured' })
+  //   }
+  // },
 
 //    OTP RESEND OTP
-  resendOtp: async (req, res) => {
-    let mobileNumber = req.session.number
+  // resendOtp: async (req, res) => {
+  //   let mobileNumber = req.session.number
 
-    try {
-      const status = await sendOtpApi(mobileNumber);
-      if (!status) {
-        return res.status(200).json({ error: true, message: 'Something went wrong' });
-      }
-      res.status(200).json({ error: false, message: 'Otp has been send successfully' });
-    } catch (error) {
-      res.status(500).json({ message: 'Internal server error occured' });
-    }
+  //   try {
+  //     const status = await sendOtpApi(mobileNumber);
+  //     if (!status) {
+  //       return res.status(200).json({ error: true, message: 'Something went wrong' });
+  //     }
+  //     res.status(200).json({ error: false, message: 'Otp has been send successfully' });
+  //   } catch (error) {
+  //     res.status(500).json({ message: 'Internal server error occured' });
+  //   }
 
-  },
+  // },
 
 
   // getShop: (req, res) => {

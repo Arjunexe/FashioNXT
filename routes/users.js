@@ -44,11 +44,11 @@ router.get("/logout", controllers.getLogout);
 
 
 //-------------------------OTP--------------------------
-router.post('/otp-login', controllers.otpLogin)
+// router.post('/otp-login', controllers.otpLogin)
 
-router.post('/otp-verify', controllers.otpVerify)
+// router.post('/otp-verify', controllers.otpVerify)
 
-router.post('/resend-otp', controllers.resendOtp)
+// router.post('/resend-otp', controllers.resendOtp)
 
 
 

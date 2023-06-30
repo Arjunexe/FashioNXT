@@ -257,23 +257,23 @@ module.exports={
   // }
 
 
-  getUserNumber: (mobileNumber) => {
-    try {
-      return new Promise((resolve, reject) => {
-        db.user.find({ phonenumber: mobileNumber }).then((user) => {
-          if (user) {
-            resolve({status : true , message : "User found"});
-          } else {
-            resolve({status : false , message : "User not found"})
-          }
-        }).catch((error) => {
-          reject(error);
-        });
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
-  },
+//   getUserNumber: (mobileNumber) => {
+//     try {
+//       return new Promise((resolve, reject) => {
+//         db.user.find({ phonenumber: mobileNumber }).then((user) => {
+//           if (user) {
+//             resolve({status : true , message : "User found"});
+//           } else {
+//             resolve({status : false , message : "User not found"})
+//           }
+//         }).catch((error) => {
+//           reject(error);
+//         });
+//       });
+//     } catch (error) {
+//       console.log(error.message);
+//     }
+//   },
 
 
   //GET SHOP PRODUCTS
