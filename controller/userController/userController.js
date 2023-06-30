@@ -241,12 +241,12 @@ module.exports = {
   getShopPage: async (req, res) => {
     try {
         let userSession = req.session.user   
-    console.log('1');
+   
      
     
        
 
-        console.log('2',); 
+       
         const page = parseInt(req.query?.page) || 1
         console.log('3');
         const perPage = 6
