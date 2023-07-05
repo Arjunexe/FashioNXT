@@ -35,7 +35,7 @@ module.exports = {
       cartHelper.getCartItems(userId).then((cartItems)=>{
        
       cartHelper.getCartCount(userId).then((count)=>{
-      res.render('user/cart',{ layout: "layout",cartItems, subTotal, total, userSession,count})
+      res.render('user/cart',{ cartItems, subTotal, total, userSession,count})
 
         })
       }) 

@@ -21,7 +21,7 @@ module.exports = {
         let address = await orderHelper.getAddress(userSession._id)
         let orders = await orderHelper.getOrders(userSession._id)
         // let product = await orderHelpers.getProduct()
-        res.render('user/profile', { layout: 'Layout', userSession, userData, count, address, orders })
+        res.render('user/profile', {  userSession, userData, count, address, orders })
     }
 
 },
@@ -248,7 +248,7 @@ orderDetails: async (req, res) => {
 
             let data = orderHelper.createData(orders, product, address)
              
-              res.render('user/order-details', { layout: 'layout' , data, user, count, product, address, orders, orderId })
+              res.render('user/order-details', { data, user, count, product, address, orders, orderId })
           })
       })
   })
