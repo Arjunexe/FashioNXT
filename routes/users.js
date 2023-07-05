@@ -12,11 +12,6 @@ const orderController = require('../controller/userController/orderController')
 //   res.render("user/signup")
 // })
 
-
-
-
-
-
 //------------------Login & Singup-----------------
 
 // GET HOME 
