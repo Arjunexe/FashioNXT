@@ -241,12 +241,7 @@ module.exports = {
   getShopPage: async (req, res) => {
     try {
         let userSession = req.session.user   
-   
-     
-    
-       
 
-       
         const page = parseInt(req.query?.page) || 1
         const perPage = 6
         if (req.query?.search || req.query?.sort || req.query?.filter) {
@@ -258,13 +253,14 @@ module.exports = {
                 req.session.noProductFound = noProductFound
              
                 : req.session.selectedProducts = product
-            res.render('user/shop', { layout: 'Layout', product, userSession, totalPages, currentPage, productResult: req.session.noProductFound })
+
+            res.render('user/shop', {  product, userSession, totalPages, currentPage, productResult: req.session.noProductFound })
         } else {
             let currentPage = 1
             const { product, totalPages } = await userHelpers.getAllProducts(page, perPage);
             if (product?.length != 0)
                 req.session.noProductFound = false
-            res.render('user/shop', { layout: 'Layout', product, userSession, currentPage,totalPages, productResult: req.session.noProduct })
+            res.render('user/shop', { product, userSession, currentPage,totalPages, productResult: req.session.noProduct })
             req.session.noProductFound = false
         }
 
