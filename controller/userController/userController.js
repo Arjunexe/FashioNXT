@@ -248,7 +248,6 @@ module.exports = {
 
        
         const page = parseInt(req.query?.page) || 1
-        console.log('3');
         const perPage = 6
         if (req.query?.search || req.query?.sort || req.query?.filter) {
             console.log('4');
