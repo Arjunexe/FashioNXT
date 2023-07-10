@@ -132,7 +132,8 @@ router.route('/return-order/').post(orderController.returnOrder)
 
 //  WISHLIST
 
-router.route('/wish-list').get(auth.userauth, controllers.getWishList)
+// router.route('/wish-list').get(auth.userauth, controllers.getWishList)
+router.get('/wish-list',controllers.getWishList)
 
 router.route('/add-to-wishlist').post(controllers.addWishList)
 
