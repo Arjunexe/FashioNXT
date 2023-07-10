@@ -126,6 +126,22 @@ router.route('/return-order/').post(orderController.returnOrder)
 
 
 
+
+
+
+
+//  WISHLIST
+
+router.route('/wish-list').get(auth.userauth, controllers.getWishList)
+
+router.route('/add-to-wishlist').post(controllers.addWishList)
+
+router.route('/remove-product-wishlist').delete(controllers.removeProductWishlist)
+
+
+
+
+
 module.exports = router;
 
 

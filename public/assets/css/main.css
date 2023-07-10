@@ -128,27 +128,27 @@ input:focus::-moz-placeholder {
 }
 
 a {
-  color: #088178;
+  color: #010202;
 }
 
 a:hover {
-  color: #046963;
+  color: #4d1c29;
 }
 
 /*--- Common Classes---------------------*/
 ::-moz-selection {
-  background: #088178;
+  background: #383838;
   /* WebKit/Blink Browsers */
   color: #fff;
 }
 ::selection {
-  background: #088178;
+  background: #373838;
   /* WebKit/Blink Browsers */
   color: #fff;
 }
 
 ::-moz-selection {
-  background: #088178;
+  background: #761313;
   /* Gecko Browsers */
   color: #fff;
 }
@@ -279,7 +279,7 @@ input[type=number]:focus,
 }
 
 .text-brand {
-  color: #088178 !important;
+  color: #000000 !important;
 }
 
 .text-primary {
@@ -299,7 +299,7 @@ input[type=number]:focus,
 }
 
 .text-info {
-  color: #18a1b7 !important;
+  color: #000000 !important;
 }
 
 .text-grey-4 {
@@ -323,7 +323,7 @@ input[type=number]:focus,
 }
 
 .bg-brand {
-  background-color: #088178 !important;
+  background-color: #051413 !important;
 }
 
 .bg-primary {
@@ -448,7 +448,7 @@ input[type=number]:focus,
 }
 
 .border-brand {
-  border-color: #088178 !important;
+  border-color: #030c0b !important;
 }
 
 .border-muted {
@@ -2023,7 +2023,7 @@ label {
 }
 
 .bg-grey-10 {
-  background-color: #d0f3ec;
+  background-color: #dddddd;
 }
 
 .home-slider .slider-arrow {
@@ -3874,7 +3874,7 @@ table .product-thumbnail img {
   height: 4px;
   border-radius: 0px;
   background: #088178;
-  color: #088178;
+  color: #000000;
 }
 
 .range #slider-range .ui-slider-range {
@@ -6796,7 +6796,7 @@ span.fi-rs-apps {
 }
 
 .main-menu > nav > ul > li > a.active {
-  color: #088178;
+  color: #222222;
 }
 
 .main-menu > nav > ul > li ul.sub-menu {
@@ -6997,7 +6997,7 @@ span.fi-rs-apps {
 }
 
 .main-menu > nav > ul > li:hover > a {
-  color: #088178;
+  color: #222222;
 }
 
 .main-menu > nav > ul > li:hover ul.sub-menu {

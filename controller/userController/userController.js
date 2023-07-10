@@ -17,16 +17,12 @@ module.exports = {
 
   getHome: async (req, res) => {
 
+    userSession = req.session.user
+    let banner = null
+    banner = await userHelpers.getAllBanner()
 
-    if (req.session.user) {
-
-      userSession = req.session.user
-
-      res.render('user/user', { userSession })
-    } else {
-      res.render('user/user')
-
-    }
+    res.render('user/user', { userSession, banner })
+   
 
   },
 
@@ -245,9 +241,9 @@ module.exports = {
         const page = parseInt(req.query?.page) || 1
         const perPage = 6
         if (req.query?.search || req.query?.sort || req.query?.filter) {
-            console.log('4');
+         
             const { product, currentPage, totalPages, noProductFound } = await userhelpers.getQueriesOnShop(req.query)
-            console.log('5');
+           
             noProductFound ?
           
                 req.session.noProductFound = noProductFound
@@ -326,7 +322,7 @@ module.exports = {
       
       const userSession = req.session.user;
      
-      const addPro = await userhelpers.addProduct(proId,userSession._id)
+      const addPro = await userhelpers.addProduct(proId)
       // const count = await cartHelper.getCartCount(userSession._id);
       
       const product = await userhelpers.getProductDetail(proId);
@@ -358,8 +354,40 @@ module.exports = {
 
 
 
+// WISHLIST 
+getWishList: async (req, res) => {
+  let userSession = req.session.user
+ 
+  const wishlistCount = await userHelpers.getWishListCount(userSession._id)
+  userHelpers.getWishListProducts(userSession._id).then((wishlistProducts) => {
+     
+      res.render('user/wishList', { userSession, wishlistProducts, wishlistCount })
+  })
+},
 
 
+
+
+addWishList: (req, res) => {
+  let proId = req.body.proId
+  let userId = req.session.user._id
+  console.log(proId, '1');
+  console.log(userId, '2');
+  userHelpers.addWishList(userId, proId).then((response) => {
+      console.log(response, '3');
+      res.send(response)
+  })
+},
+
+
+
+removeProductWishlist: (req, res) => {
+  let proId = req.body.proId
+  let wishListId = req.body.wishListId
+  userHelpers.removeProductWishlist(proId, wishListId).then((response) => {
+      res.send(response)
+  })
+},
 
 
 

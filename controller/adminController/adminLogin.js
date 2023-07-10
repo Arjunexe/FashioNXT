@@ -572,6 +572,74 @@ postSalesReport: (req, res) => {
 
 
 
+// ADD BANNER
+getAddBanner: (req, res) => {
+  let admin = req.session.admin
+  res.render('admin/addBanner', { layout: 'admin-layout', admin })
+},
+
+
+
+postAddBanner: (req, res) => {
+ 
+  adminHelper.addBanner(req.body, req.file.filename).then((response) => {
+      if (response) {
+          
+          res.send({ status: true })
+      } else {
+          res.send({ status: false });
+      }
+  });
+},
+
+
+
+
+getBannerList: (req, res) => {
+  let admin = req.session.admin
+  adminHelper.getBannerList().then((banner) => {
+      
+      res.render('admin/bannerList', { layout: 'admin-layout', admin, banner })
+  })
+},
+
+
+
+
+getEditBanner: (req, res) => {
+  let admin = req.session.admin
+  adminHelper.getEditBanner(req.query.banner).then((banner) => {
+      res.render("admin/editBanner", { layout: "admin-layout", admin, banner })
+  })
+},
+
+
+
+
+
+postEditBanner: (req, res) => {
+  console.log(req.query.editbanner, 'req.query.editbanner');
+  console.log(req.body, 'req.body');
+  console.log(req?.file?.filename, ' req?.file?.filename');
+  adminHelper.postEditBanner(req.query.editbanner, req.body, req?.file?.filename).then((response) => {
+      res.redirect("/admin/banner-list")
+  })
+},
+
+
+
+
+deleteBanner: (req, res) => {
+  adminHelper.deleteBanner(req.params.id).then((response) => {
+      res.send(response)
+  })
+}
+
+
+
+
+
+
 }
 
 

@@ -407,6 +407,79 @@ postReport: (date) => {
 
 
 
+addBanner: (texts, Image) => {
+
+
+    return new Promise(async (resolve, reject) => {
+
+      let banner = db.Banner({
+        title: texts.title,
+        mainDescription: texts.mainDescription,
+        subDescription: texts.subDescription,
+        // categoryOffer: texts.categoryOffer,
+        link : texts.link,
+        image: Image
+
+      })
+      await banner.save().then((response) => {
+        resolve(response)
+      })
+    })
+  },
+
+
+  getBannerList:()=>{
+    return new Promise((resolve,reject)=>{
+     db.Banner.find().then((banner)=>{
+         resolve(banner)
+     })
+    })
+   },
+
+
+
+   getEditBanner:(bannerId)=>{
+    return new Promise((resolve,reject)=>{
+        db.Banner.findOne({_id : bannerId}).then((bannerFound)=>{
+        resolve(bannerFound)
+        })
+    })
+  },
+
+
+  postEditBanner:(bannerId,text,image)=>{
+    return new Promise((resolve,reject)=>{
+        db.Banner.updateOne(
+            {_id : bannerId},
+            {
+                $set:{
+                    title : text.title,
+                    mainDescription : text.mainDescription,
+                    subDescription :text.subDescription,
+                    categoryOffer : text.categoryOffer,
+                    link : text.link,
+                    image : image
+                }
+            }).then((bannerUpdated)=>{
+                resolve(bannerUpdated)
+            })
+    })
+  },
+
+
+
+  deleteBanner:(bannerId)=>{
+    return new Promise((resolve,reject)=>{
+        db.Banner.deleteOne({_id : bannerId}).then(()=>{
+            resolve()
+        })
+    })
+  }
+
+
+
+
+
 
 
 

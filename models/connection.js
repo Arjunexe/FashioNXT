@@ -249,6 +249,58 @@ const couponSchema = new mongoose.Schema({
 
 
 
+const bannerSchema = new mongoose.Schema({
+  title: {
+      type: String
+  },
+  image: {
+      type: String
+  },
+  mainDescription: {
+      type: String
+  },
+  subDescription: {
+      type: String
+  },
+  categoryOffer: {
+      type: String,
+      default: null
+  },
+  link: {
+      type: String
+  },
+  createdAt: {
+      type: Date,
+      default: new Date()
+  },
+  updatedAt: {
+      type: Date
+  }
+})
+
+
+
+const wishListSchema = new mongoose.Schema({
+  user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user'
+  },
+  wishList: [
+      {
+          productId: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: 'product'
+          },
+
+          createdAt: {
+              type: Date,
+              default: Date.now
+          }
+      }
+  ]
+})
+
+
 
 
 module.exports = {
@@ -260,7 +312,9 @@ module.exports = {
   Cart: mongoose.model('cart', cartSchema),
   Address: mongoose.model('address', addressSchema),
   Order: mongoose.model('order', orderSchema),
-  Coupon: mongoose.model('coupon', couponSchema)
+  Coupon: mongoose.model('coupon', couponSchema),
+  Banner : mongoose.model('banner',bannerSchema),
+  Wishlist: mongoose.model('wishlist', wishListSchema)
 
 
 

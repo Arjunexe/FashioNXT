@@ -152,6 +152,19 @@ router.route('/sales-report').get( auth.adminauth,adminController.getSalesReport
 
 
 
+//BANNER 
+router.route('/add-banner').get(auth.adminauth,adminController.getAddBanner).post(multer.addBannerupload,adminController.postAddBanner)
+
+
+router.route('/banner-list').get(auth.adminauth, adminController.getBannerList)
+
+
+router.route('/edit-banner').get(auth.adminauth, adminController.getEditBanner)
+
+router.route('/edit-banner').post(multer.editBannerupload,adminController.postEditBanner)
+
+
+router.route('/delete-banner/:id').delete(auth.adminauth,adminController.deleteBanner)
 
 
 
