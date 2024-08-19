@@ -1,0 +1,50 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run_pull:
+    name: Run Pull
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install SSH keys
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+        ls -la ~/.ssh
+        stat ~/.ssh/id_rsa
+      shell: bash
+
+    - name: Test SSH Connection
+      run: |
+        ssh -v -o StrictHostKeyChecking=no "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "echo SSH connection successful"
+      shell: bash
+
+    - name: Connect and Pull Code
+      run: |
+        ssh -o StrictHostKeyChecking=no "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" << 'EOF'
+          set -e
+          cd "${{ secrets.WORK_DIR }}"
+          git checkout "${{ secrets.MAIN_BRANCH }}"
+          git pull
+        EOF
+      shell: bash
+    
+    - name: Install Dependencies
+      run: |
+        ssh -o StrictHostKeyChecking=no "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" << 'EOF'
+          cd "${{ secrets.WORK_DIR }}"
+          npm install
+        EOF
+      shell: bash
+
+    - name: Cleanup
+      run: rm -rf ~/.ssh
+      shell: bash
