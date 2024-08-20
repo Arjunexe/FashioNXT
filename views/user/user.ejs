@@ -5,7 +5,7 @@
     <main class="main">
         <section class="home-slider position-relative mb-30">
             <div class="container">
-                <div class="home-slide-cover bg-grey-10 mt-30">
+                <div class="home-slide-cover  mt-30" style="padding: 0;">
                     <div class="hero-slider-1 style-4 dot-style-1 dot-style-1-position-1">
 
                         <% banner.forEach((banner, index) => { %>
@@ -14,7 +14,7 @@
                         <div class="single-hero-slider single-animation-wrap">
                             <div class="container">
                                 <div class="row align-items-center slider-animated-1">
-                                    <div class="col-lg-5 col-md-6">
+                                    <div class="col-lg-5 col-md-6" style="position: absolute; z-index: 1; bottom: 10px;">
                                         <div class="hero-slider-content-2">
                                             <h4 class="animated"><%= banner.title %></h4>
                                             <h3 class="animated fw-900"><%= banner.mainDescription %></h3>
@@ -23,9 +23,9 @@
                                             <a class="animated btn btn-brush btn-brush-3" href="/shop" tabindex="0"> Shop Now </a>
                                         </div>
                                     </div>
-                                    <div class="col-lg-7 col-md-6">
+                                    <div class="col-lg-7 col-md-6" style="width: 100%;">
                                         <div class="single-slider-img single-slider-img-<%= index + 1 %>">
-                                            <img class="animated" src="/productImages/<%= banner.image %>" alt="">
+                                            <img class="animated" src="/productImages/<%= banner.image %>" alt="" style="height: 100%; width:100%;" >
                                         </div>
                                     </div>
                                 </div>
