@@ -68,7 +68,7 @@ const start=function(){
     connectDB(process.env.MONGO_URL)
   }catch(err){
    // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    console.log(err);
+    console.log('Failed to connect to DB',err);
   }
 }
 
