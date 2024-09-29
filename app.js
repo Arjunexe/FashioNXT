@@ -52,7 +52,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.static(path.join(__dirname, "public/admin-assets")));
 
-app.use(session({secret:"key", resave: true,saveUninitialized: true,cookie:{maxAge:600000}}))
+// app.use(session({secret:"key", resave: true,saveUninitialized: true,cookie:{maxAge:600000}}))
 app.use((req, res, next) => {
   res.header('Cache-Control', 'no-cache,private,no-Store,must-revalidate,max-scale=0,post-check=0,pre-check=0');
   next();
