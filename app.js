@@ -54,15 +54,15 @@ app.use(express.static(path.join(__dirname, "public/admin-assets")));
 
 // app.use(session({secret:"key", resave: true,saveUninitialized: true,cookie:{maxAge:600000}}))
 
-app.use((req, res, next) => {
-  try{
-  res.header('Cache-Control', 'no-cache,private,no-Store,must-revalidate,max-scale=0,post-check=0,pre-check=0');
-  next();
-  } catch (error) {
-    console.log("error in catch middleware :",error);
-    next(error);
-  }
-})
+// app.use((req, res, next) => {
+//   try{
+//   res.header('Cache-Control', 'no-cache,private,no-Store,must-revalidate,max-scale=0,post-check=0,pre-check=0');
+//   next();
+//   } catch (error) {
+//     console.log("error in catch middleware :",error);
+//     next(error);
+//   }
+// })
 
 
 app.use('/', usersRouter);
