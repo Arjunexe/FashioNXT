@@ -6,13 +6,11 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const expressLayouts = require("express-ejs-layouts");
 const session= require('express-session')
-const connectDB = require('./models/mongoConnection')
+const db = require('./models/mongoConnection')
 const ConnectMongodbSession = require('connect-mongodb-session')
 const mongodbSession = new ConnectMongodbSession(session)
 require('dotenv').config()
 
-// DB connection
-const db = require("./models/connection");
 
 
 // const nocache = require('nocache')
@@ -65,20 +63,11 @@ app.use(express.static(path.join(__dirname, "public/admin-assets")));
 // })
 
 
+// Database connection
+db.connect();
+
 app.use('/', usersRouter);
 app.use('/admin', adminRouter);
-
-
-const start=function(){
-  try{
-    connectDB(process.env.MONGO_URL)
-  }catch(err){
-   // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    console.log('Failed to connect to DB :',err); 
-  }
-}
-
-start();
 
 
 
