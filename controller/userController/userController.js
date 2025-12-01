@@ -326,7 +326,6 @@ module.exports = {
       // const count = await cartHelper.getCartCount(userSession._id);
       
       const product = await userhelpers.getProductDetail(proId);
-      let response
       res.render('user/productDetails', { product, userSession, addPro });
     } catch (error) {
     
