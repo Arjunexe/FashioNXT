@@ -358,16 +358,21 @@ const adminLogin = {
   //POST ADD PRODUCT
 
   postAddProduct: (req, res) => {
-    let file = req.files
-    const fileName = file.map((file) => {
-      return file.filename
-    })
-    // console.log(file);
-    const product = req.body
-    product.img = fileName
-    adminHelper.postAddProduct(product).then(() => {
-      res.render('admin/admin-dashboard', { layout: "admin-layout" })
-    })
+    try {
+      let file = req.files
+      const fileName = file.map((file) => {
+        return file.filename
+      })
+      // console.log(file);
+      const product = req.body
+      product.img = fileName
+      adminHelper.postAddProduct(product).then(() => {
+        // res.render('admin/admin-dashboard', { layout: "admin-layout" })
+        res.redirect('/admin/productList')
+      })
+    } catch (error) {
+      console.log(error);
+    }
   },
 
 

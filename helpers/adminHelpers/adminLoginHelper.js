@@ -254,7 +254,6 @@ module.exports = {
                 product.save().then(() => {
                     resolve()
                 })
-
             })
         } catch (error) {
             console.log(error.message);
