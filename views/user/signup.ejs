@@ -168,7 +168,7 @@
           console.log("done");
           location.href = '/login'
         } else {
-          document.getElementById('errorEmail').innerText = "Email already Exist"
+          document.getElementById('errorEmail').innerText = response.message
         }
       }
     })
