@@ -45,39 +45,46 @@ module.exports = {
 
     // },
 
-    doSignUp: (data) => {
-        let obj = {}
-        return new Promise(async (resolve, reject) => {
-            try {
-                await db.user.findOne({ email: data.email }).then(async (res) => {
-                    if (!res) {
-                        data.password = await bcrypt.hash(data.password, 10)
-                        userData = {
-                            username: data.username,
-                            email: data.email,
-                            phonenumber: data.phonenumber,
-                            password: data.password
+    doSignUp: async (data) => {
+        try {
+            const obj = {};
 
-                            // Password: hashedPassword
+            // Check if email or phone already exists
+            const existingUser = await db.user.findOne({
+                $or: [
+                    { email: data.email },
+                    { phonenumber: data.phonenumber }
+                ]
+            });
 
-
-                        }
-                        let userDb = await db.user(userData)
-                        userDb.save()
-                        obj.status = true
-                        obj.data = userDb
-
-                        resolve(obj)
-                    } else {
-
-                        resolve({ status: false })
-                    }
-                })
-
-            } catch (error) {
-                console.log(error, "Login failed");
+            if (existingUser) {
+                obj.status = false;
+                obj.message = (existingUser.email === data.email)
+                    ? "Email already registered"
+                    : "Phone number already registered";
+                return obj;
             }
-        })
+
+            // Hash password
+            const hashedPassword = await bcrypt.hash(data.password, 10);
+
+            const userData = {
+                username: data.username,
+                email: data.email,
+                phonenumber: data.phonenumber,
+                password: hashedPassword,
+            };
+
+            const newUser = await db.user.create(userData);
+
+            obj.status = true;
+            obj.data = newUser;
+            return obj;
+
+        } catch (error) {
+            console.error("Signup Error:", error);
+            throw error; // so controller can handle it
+        }
     },
 
 
